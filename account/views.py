@@ -85,7 +85,6 @@ def transmitRest(request):
     data["sender"] = request.POST["sender"]
     data["receivers"] = request.POST["receivers"]
     data["sum"] = request.POST["sum"]
-    print('DATA', data)
     try:
         transmit(data)
     except AccountError as e:
