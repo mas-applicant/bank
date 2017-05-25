@@ -7,13 +7,10 @@ from django.conf import settings
 
 from django.core.wsgi import get_wsgi_application
 
-sys.path.append("/home/alexander/projects/web/bank")
+sys.path.append(os.getcwd())
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bank.settings'
 application = get_wsgi_application()
-
-# settings.configure(TEMPLATE_DIRS=('./templates/',), DEBUG=False,
-#                            TEMPLATE_DEBUG=False)
 
 import account
 import account.models
@@ -33,13 +30,6 @@ def init():
 
 class TestStringMethods(unittest.TestCase):
 
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
-
     def test_ok(self):
         _id = init()
         flag = account.views.transmit({"sender": _id, "receivers": "2 3", "sum": "200"})
@@ -50,6 +40,11 @@ class TestStringMethods(unittest.TestCase):
         _id = init()
         with self.assertRaises(account.views.SenderNotFoundError):
             account.views.transmit({"sender": "-1", "receivers": "2", "sum": "200"})
+
+    def test_receivers_not_defined(self):
+        _id = init()
+        with self.assertRaises(account.views.ReceiversNotDefinedError):
+            account.views.transmit({"sender": _id, "receivers": "", "sum": "200"})
 
     def test_receiver_not_found(self):
         _id = init()
